@@ -1,9 +1,10 @@
-import { Pedido } from "../model/Pedido";
+import { Pedido } from "../model/Pedido"; // Importa o modelo Pedido
 
 export class PedidoRepository {
-    private pedidos: Pedido[] = [];
-    private proximoId: number = 1;
+    private pedidos: Pedido[] = []; // Array que armazena todos os pedidos em memória
+    private proximoId: number = 1; // Controla o próximo ID a ser atribuído a um novo pedido
 
+    // Cria um novo pedido e adiciona ao array, se a quantidade for válida
     criar(codigoBebe: number, quantidade: number): boolean {
         if (quantidade <= 0) return false;
         const pedido = new Pedido(this.proximoId++, codigoBebe, quantidade, new Date());
@@ -33,5 +34,21 @@ export class PedidoRepository {
     
      buscarPorId(id: number): Pedido | undefined {
         return this.pedidos.find(p => p.id === id);
+    }
+
+    confirmar(id: number): boolean {
+        const pedido = this.buscarPorId(id);
+        if (!pedido) return false;
+        if (pedido.status !== "Pendente") return false;
+        pedido.confirmarPedido();
+        return true;
+    }
+
+    cancelar(id: number): boolean {
+        const pedido = this.buscarPorId(id);
+        if (!pedido) return false;
+        if (pedido.status !== "Pendente") return false;
+        pedido.cancelarPedido();
+        return true;
     }
 }

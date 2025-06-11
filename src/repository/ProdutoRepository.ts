@@ -31,7 +31,7 @@ export class ProdutoRepository {
         return true;
     }
 
-     buscarPorCodigo(codigo: number): Produto | undefined {
+    buscarPorCodigo(codigo: number): Produto | undefined {
         return this.produtos.find(p => p.codigo === codigo);
     }
 }

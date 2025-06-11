@@ -1,16 +1,17 @@
 export class Pedido {
-    private _id: number;
-    private _codigoBebe: number;
-    private _quantidade: number;
-    private _data: Date;
-    private _status: string;
+    private _id: number; // Identificador único do pedido
+    private _codigoBebe: number; // Código do bebê reborn relacionado ao pedido
+    private _quantidade: number; // Quantidade de itens no pedido
+    private _data: Date; // Data de criação do pedido
+    private _status: string; // Status atual do pedido (Pendente, Confirmado, Cancelado)
 
+    // Construtor inicializa os atributos do pedido
     constructor(id: number, codigoBebe: number, quantidade: number, data: Date) {
         this._id = id;
         this._codigoBebe = codigoBebe;
         this._quantidade = quantidade;
         this._data = data;
-        this._status = "Pendente";
+        this._status = "Pendente"; // Todo novo pedido começa como pendente
     }
 
     get id(): number {

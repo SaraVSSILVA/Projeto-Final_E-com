@@ -1,54 +1,25 @@
 import { Produto } from '../model/Produto';
-import { ProdutoRepository } from './../repository/ProdutoRepository';
+import { ProdutoRepository } from '../repository/ProdutoRepository';
 
-export class ProdutoController extends ProdutoRepository {
+export class ProdutoController {
+    private repository = new ProdutoRepository(); // Instância do repositório de produtos
 
-    private listaProdutos: Array<Produto> = new Array<Produto>();
-    numero: number = 0;
-
-    listarTodas(): void {
-        for (let produto of this.listaProdutos) {
-            produto.visualizarProduto();
-        }
+    criar(nome: string, preco: number): boolean {
+        return this.repository.criar(nome, preco);
     }
 
-    criar(nome: string, preco: number, estoque: number = 10): boolean {
-        const novoCodigo = this.numero++;
-        const produto = new Produto(novoCodigo, nome, preco, estoque);
-        this.listaProdutos.push(produto);
-        return true;
-    }
     listar(): Produto[] {
-        return this.listaProdutos;
-    }
-    atualizar(codigo: number, nome: string, preco: number): boolean {
-        throw new Error('Method not implemented.');
-    }
-    remover(codigo: number): boolean {
-        throw new Error('Method not implemented.');
+        return this.repository.listar();
     }
     buscarPorCodigo(codigo: number): Produto | undefined {
-        return this.listaProdutos.find(produto => produto.codigo === codigo);
+        return this.repository.buscarPorCodigo(codigo);
     }
 
-    public venda(numero: number, quantidade: number): boolean {
-        let produto = this.buscarNoArray(numero);
-        console.log('Tentando vender', quantidade, 'do produto', numero, 'Encontrado:', produto);
-        if (produto !== undefined && produto !== null) {
-            console.log('Estoque atual:', produto.estoque);
-            if (produto.venda(quantidade)) {
-                console.log('Venda realizada!');
-                return true;
-            } else {
-                console.log('Estoque insuficiente!');
-            }
-        } else {
-            console.log('Produto não encontrado!');
-        }
-        return false;
+    atualizar(id: number, nome: string, preco: number): boolean {
+        return this.repository.atualizar(id, nome, preco);
     }
 
-    buscarNoArray(numero: number): Produto | undefined {
-        return this.listaProdutos.find(produto => produto.codigo === numero);
+    remover(id: number): boolean {
+        return this.repository.remover(id);
     }
 }

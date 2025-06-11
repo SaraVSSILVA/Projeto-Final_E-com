@@ -1,15 +1,13 @@
 export class Produto {
-    numero: number | undefined;
     private _codigo: number;
     private _nome: string;
     private _preco: number;
-    private _estoque: number; // Adicione o atributo de estoque
 
-    constructor(codigo: number, nome: string, preco: number, estoque: number = 10) {
+    // Construtor inicializa os atributos do produto
+    constructor(codigo: number, nome: string, preco: number) {
         this._codigo = codigo;
         this._nome = nome;
         this._preco = preco;
-        this._estoque = estoque; // Inicialize o estoque
     }
 
     get codigo(): number {
@@ -26,12 +24,6 @@ export class Produto {
     }
     set preco(value: number) {
         this._preco = value;
-    }
-    get estoque(): number {
-        return this._estoque;
-    }
-    set estoque(value: number) {
-        this._estoque = value;
     }
 
     public atualizarPreco(novoPreco: number): void {
@@ -54,16 +46,7 @@ export class Produto {
 
     public visualizarProduto(): void {
         console.log(
-            `Produto #${this._codigo} | Nome: ${this._nome} | Preço: R$ ${this._preco.toFixed(2)} | Estoque: ${this._estoque}`
+            `Produto #${this._codigo} | Nome: ${this._nome} | Preço: R$ ${this._preco.toFixed(2)}`
         );
-    }
-
-    public venda(quantidade: number): boolean {
-        console.log('Tentando vender', quantidade, 'do produto', this._codigo, 'Encontrado:', this);
-        if (this._estoque >= quantidade) {
-            this._estoque -= quantidade;
-            return true;
-        }
-        return false;
     }
 }

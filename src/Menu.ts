@@ -1,26 +1,22 @@
-import readlinesync = require("readline-sync");
-import { ProdutoRepository } from "./repository/ProdutoRepository";
-import { PedidoRepository } from "./repository/PedidoRepository";
-import { colors } from "./util/Colors";
-import { ProdutoController } from "./controller/ProdutoController";
+import readlinesync = require("readline-sync"); // Importa biblioteca para entrada de dados via terminal
+import { ProdutoRepository } from "./repository/ProdutoRepository"; // Importa o repository de produtos
+import { PedidoRepository } from "./repository/PedidoRepository"; // 
+import { colors } from "./util/Colors"; // Importa utilitario de cores para o terminal 
+import { ProdutoController } from "./controller/ProdutoController"; // Importa o controller de produtos
+import { PedidoController } from "./controller/PedidoController";
 
 export function main() {
 
-    let produto: ProdutoController = new ProdutoController();
+    const produtoRepo = new ProdutoController(); // Instancia o controller de produtos 
+    const pedidoRepo = new PedidoRepository(); // Instancia o controller de pedidos
 
-    let opcao: number;
-
-    const produtoRepo = new ProdutoController();
-   // const pedidoRepo = new PedidoRepository(); 
-
-    while (true) {
-
+    while (true) { // Loop principal do menu
         exibirMenu();
 
         console.log("Entre com a opção desejada: ");
-        opcao = readlinesync.questionInt("");
+        const opcao = readlinesync.questionInt("");
 
-        if (opcao == 8) {
+        if (opcao == 10) {
             console.log("\nBaby Reborn: A Realidade no Berço!");
             sobre();
             process.exit(0);
@@ -31,8 +27,7 @@ export function main() {
                 console.log("\n\nCadastrar novo Bebê Reborn\n\n")
                 const nome = readlinesync.question("Nome do bebê: ");
                 const preco = readlinesync.questionFloat("Preço: ");
-                const estoque = readlinesync.questionInt("Estoque inicial: ");
-                produtoRepo.criar(nome, preco, estoque);
+                produtoRepo.criar(nome, preco); // sem estoque
                 console.log("Bebê cadastrado com sucesso!");
                 keyPress();
                 break;
@@ -76,7 +71,7 @@ export function main() {
 
             case 5:
                 console.log("\n\nRemover Bebê Reborn \n\n")
-                 const codigoRemover = readlinesync.questionInt("Código do bebê: ");
+                const codigoRemover = readlinesync.questionInt("Código do bebê: ");
                 if (produtoRepo.remover(codigoRemover)) {
                     console.log("Bebê removido com sucesso!");
                 } else {
@@ -89,7 +84,10 @@ export function main() {
                 console.log("\n\nRealizar Venda\n\n")
                 const codigoBebeVenda = readlinesync.questionInt("Código do bebê: ");
                 const quantidadeVenda = readlinesync.questionInt("Quantidade: ");
-                if (produtoRepo.venda(codigoBebeVenda, quantidadeVenda)) {
+                const bebeExistente = produtoRepo.buscarPorCodigo(codigoBebeVenda);
+                if (!bebeExistente) {
+                    console.log("Erro: Bebê não cadastrado. Não é possível realizar a venda.");
+                } else if (pedidoRepo.criar(codigoBebeVenda, quantidadeVenda)) {
                     console.log("Venda realizada com sucesso!");
                 } else {
                     console.log("Erro ao realizar venda. Verifique os dados.");
@@ -97,23 +95,51 @@ export function main() {
                 keyPress();
                 break;
 
-            // case 7: 
-            //     console.log("\n\nListar Vendas\n\n")
-            //     const pedidos = pedidoRepo.listar();
-            //     if (pedidos.length === 0) {
-            //         console.log("Nenhuma venda realizada.");
-            //     } else {
-            //         pedidos.forEach(p => p.visualizarPedido());
-            //     }
-            //     keyPress();
-            //     break;
+            case 7: 
+                console.log("\n\nListar Vendas\n\n")
+                const pedidos = pedidoRepo.listar();
+                if (pedidos.length === 0) {
+                    console.log("Nenhuma venda realizada.");
+                } else {
+                    pedidos.forEach(p => {
+                        if (typeof p.visualizarPedido === "function") {
+                            p.visualizarPedido();
+                        } else {
+                            console.log(p);
+                        }
+                    });
+                }
+                keyPress();
+                break;
+
+            case 8:
+                console.log("\n\nConfirmar Pedido\n\n");
+                const codigoPedidoConfirmar = readlinesync.questionInt("Código do pedido: ");
+                if (pedidoRepo.confirmar(codigoPedidoConfirmar)) {
+                    console.log("Pedido confirmado com sucesso!");
+                } else {
+                    console.log("Pedido não encontrado ou já está confirmado/cancelado.");
+                }
+                keyPress();
+                break;
+
+            case 9:
+                console.log("\n\nCancelar Pedido\n\n");
+                const codigoPedidoCancelar = readlinesync.questionInt("Código do pedido: ");
+                if (pedidoRepo.cancelar(codigoPedidoCancelar)) {
+                    console.log("Pedido cancelado com sucesso!");
+                } else {
+                    console.log("Pedido não encontrado ou já está confirmado/cancelado.");
+                }
+                keyPress();
+                break;
 
             default:
                 console.log(colors.fg.whitestrong, "\nOpção Inválida!\n", colors.reset);
                 keyPress();
                 break;
         }
-
+    }
     }
 
 
@@ -132,7 +158,9 @@ export function main() {
     "            5 - Remover Bebê Reborn                  \n" +
     "            6 - Realizar Venda                       \n" +
     "            7 - Listar Vendas                        \n" +
-    "            8 - Sair                                 \n" +
+    "            8 - Confirmar Pedido                      \n" +
+    "            9 - Cancelar Pedido                       \n" +
+    "           10 - Sair                                  \n" +
     "                                                     \n" +
     "*****************************************************\n" +
     colors.reset
@@ -152,7 +180,7 @@ export function main() {
     readlinesync.prompt();
 }
 
-}
+
 
 main();
 
