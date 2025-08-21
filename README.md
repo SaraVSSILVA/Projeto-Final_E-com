@@ -53,7 +53,3 @@ tsconfig.json
    ```bash
    node dist/Menu.js
    ```
-
-## Autora
-
-Sara V. S. Silva
